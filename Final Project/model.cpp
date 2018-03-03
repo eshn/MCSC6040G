@@ -4,14 +4,14 @@
 #include "time.h"
 
 
-#define N 50 // Population size
+#define N 500 // Population size
 #define INF_INIT 5 // Percentage of population initially infected.
-#define A 3 // Minimum particle distance for interaction
+#define A 1 // Minimum particle distance for interaction
 
-#define REC_MEAN 10 // Mean of recovery time
+#define REC_MEAN 25 // Mean of recovery time
 #define REC_VAR 10 // Variance of recovery time
 #define L 25 // Domain size
-#define SEED 0 // Flag for seed
+#define SEED 1 // Flag for seed
 #define TMAX 5000
 #define PI 3.14159265359
 
@@ -22,7 +22,7 @@ double rnd()
 	return (double)rand() / RAND_MAX;
 }
 
-// Probability of infection (by distance)
+// Probability of infection (by distance). IMPORTANT, THIS IS A PROBABILITY PER UNIT TIME.
 double disease_prob(double x, double a)
 {
 	double prob;
@@ -162,15 +162,15 @@ int main()
 		{
 			if (state[i] == 1)
 			{
-				fprintf(outfile, "s%i %f %f 0\n", i, x[i], y[i]);
+				fprintf(outfile, "s%i %f %f %d\n", i, x[i], y[i], state[i]);
 			}
 			else if (state[i] == 2)
 			{
-				fprintf(outfile, "i%i %f %f 0\n", i, x[i], y[i]);
+				fprintf(outfile, "i%i %f %f %d\n", i, x[i], y[i], state[i]);
 			}
 			else if (state[i] == 3)
 			{
-				fprintf(outfile, "r%i %f %f 0\n", i, x[i], y[i]);
+				fprintf(outfile, "r%i %f %f %d\n", i, x[i], y[i], state[i]);
 			}
 		}
 		
@@ -180,6 +180,5 @@ int main()
 		}
 		t++;
 	}
-
 	fclose(outfile);
 }
