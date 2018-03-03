@@ -16,11 +16,13 @@
 #define PI 3.14159265359
 
 
+// RNG Procedure
 double rnd()
 {
 	return (double)rand() / RAND_MAX;
 }
 
+// Probability of infection (by distance)
 double disease_prob(double x, double a)
 {
 	double prob;
@@ -28,14 +30,15 @@ double disease_prob(double x, double a)
 	return prob;
 }
 
-double BMT()
+// Box-Muller Transform with arbitrary mean and variance
+double BMT(double m, double v)
 {
 	double r1, r2, bm;
 	do{
 		r1 = rnd();
 	} while (r1 == 0);
 		r2 = rnd();
-	bm = (double)sqrt(-2 * log(r1))*cos(2 * PI*r2);
+	bm = (double)sqrt(-2 * v * log(r1))*cos(2 * PI*r2) + m;
 	return bm;
 }
 
@@ -50,6 +53,7 @@ int main()
 
 	double x[N], y[N], vx[N], vy[N];
 	int state[N]; // State of the particle. 1 - Susceptible. 2 - Infected. 3 - Recovered.
+	int TtR[N]; // Time to Recover (after infection)
 	int t = 0;
 	double r, dist;
 	
@@ -62,6 +66,8 @@ int main()
 		vx[i] = L / 50.0 * (rnd() - 0.5);
 		vy[i] = L / 50.0 * (rnd() - 0.5);
 
+		TtR[i] = 0;
+
 		state[i] = 1;
 	}
 
@@ -71,6 +77,7 @@ int main()
 		int ind;
 		ind = int(N*rnd());
 		state[ind] = 2;
+		TtR[ind] = int(BMT((double)REC_MEAN, (double)REC_VAR)); // Recovery time based on Gaussian
 	}
 
 	FILE *outfile;
@@ -116,7 +123,16 @@ int main()
 				y[i] = 2.0 * L - y[i];
 				vy[i] = -vy[i];
 			}
-
+			if (state[i] == 2) // Subtracts 1 timestep from recovery time. If 0, change status to recovered.
+			{
+				if (TtR[i] == 0)
+				{
+					state[i] = 3;
+				}
+				else {
+					TtR[i] -= 1;
+				}
+			}
 		}
 		for (int i = 0; i < N; i++)
 		{
@@ -135,6 +151,7 @@ int main()
 							if (r < prob)
 							{
 								state[j] = 2;
+								TtR[j] = int(BMT((double)REC_MEAN, (double)REC_VAR)); // Adds recovery time
 							}
 						}
 					}
