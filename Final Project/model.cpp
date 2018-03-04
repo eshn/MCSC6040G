@@ -2,45 +2,22 @@
 #include "stdlib.h"
 #include "math.h"
 #include "time.h"
+#include "tools.h"
 
 
-#define N 500 // Population size
+#define N 50 // Population size
 #define INF_INIT 5 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
 #define REC_MEAN 25 // Mean of recovery time
 #define REC_VAR 10 // Variance of recovery time
+#define SUS_MEAN 25 // Mean of recovery time
+#define SUS_VAR 10 // Variance of recovery time
+
 #define L 25 // Domain size
 #define SEED 1 // Flag for seed
 #define TMAX 5000
 #define PI 3.14159265359
-
-
-// RNG Procedure
-double rnd()
-{
-	return (double)rand() / RAND_MAX;
-}
-
-// Probability of infection (by distance). IMPORTANT, THIS IS A PROBABILITY PER UNIT TIME.
-double disease_prob(double x, double a)
-{
-	double prob;
-	prob = exp(1 / (a*a))*exp(-1 / (a*a - x * x))*exp(-4 * x*x / (a*a));
-	return prob;
-}
-
-// Box-Muller Transform with arbitrary mean and variance
-double BMT(double m, double v)
-{
-	double r1, r2, bm;
-	do{
-		r1 = rnd();
-	} while (r1 == 0);
-		r2 = rnd();
-	bm = (double)sqrt(-2 * v * log(r1))*cos(2 * PI*r2) + m;
-	return bm;
-}
 
 int main()
 {
@@ -53,7 +30,7 @@ int main()
 
 	double x[N], y[N], vx[N], vy[N];
 	int state[N]; // State of the particle. 1 - Susceptible. 2 - Infected. 3 - Recovered.
-	int TtR[N]; // Time to Recover (after infection)
+	int TtR[N], TtS[N]; // Time to Recover (after infection), Susceptable (after recovery)
 	int t = 0;
 	double r, dist;
 	
@@ -67,6 +44,7 @@ int main()
 		vy[i] = L / 50.0 * (rnd() - 0.5);
 
 		TtR[i] = 0;
+		TtS[i] = 0;
 
 		state[i] = 1;
 	}
@@ -123,14 +101,26 @@ int main()
 				y[i] = 2.0 * L - y[i];
 				vy[i] = -vy[i];
 			}
-			if (state[i] == 2) // Subtracts 1 timestep from recovery time. If 0, change status to recovered.
+			if (state[i] == 2) // Remaining time of infection. If 0, change to recovered.
 			{
 				if (TtR[i] == 0)
 				{
 					state[i] = 3;
+					TtS[i] = int(BMT((double)SUS_MEAN, (double)SUS_VAR)); // Adds time to become susceptible again
 				}
 				else {
 					TtR[i] -= 1;
+				}
+			}
+			else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
+			{
+				if (TtS[i] == 0)
+				{
+					state[i] = 1;
+				}
+				else
+				{
+					TtS[i] -= 1;
 				}
 			}
 		}
