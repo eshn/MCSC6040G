@@ -1,0 +1,13 @@
+
+*.opendb
+
+*.sln
+*.ipch
+*.vcxproj
+*.db
+Assignment2/.vs/Assignment2/v15/.suo
+Assignment1/Assignment1/stdafx.cpp
+*.filters
+Assignment1/.vs/Assignment1/v15/.suo
+Assignment2/Assignment2/stdafx.cpp
+Assignment3/.vs/Assignment3/v15/.suo
