@@ -12,7 +12,7 @@ set first [expr srand($rseed)]
 
 set PI 3.14159265359
 
-set tmax 1000
+set tmax 10000
 
 # Boundaries
 set boxx 100
@@ -87,7 +87,7 @@ for { set i 0 } { $i < $N1 } { incr i } {
 	}
 	set y $yoff
 	set z 0.0
-	part $i pos $x $y $z type 1 ext_force 0.5 0 0
+	part $i pos $x $y $z type 1 ext_force 0.2 0 0
 }
 
 #Longer cars (length 5)
@@ -97,7 +97,7 @@ for {set j 0} {$j < $N2} {incr j} {
 	for { set i 0 } { $i < 5} {incr i} {
 		set ind [expr 100 + $j * $N2 + $i]
 		if {$i == 0} {
-			part $ind pos $x $y 0.0 type 2 ext_force 0.5 0.0 0.0
+			part $ind pos $x $y 0.0 type 2 ext_force 0.3 0.0 0.0
 		}
 		if {$i != 0} {
 			part $ind pos [expr $x - $i] $y 0.0 type 2 ext_force 0.0 0.0 0.0
@@ -136,7 +136,7 @@ for { set t 0 } { $t < $tmax } { incr t } {
 		        set x [lindex [part $ind print folded_position] 0]
 		        set y [lindex [part $ind print folded_position] 1]
 			if {$i == 0} {
-		        	puts $ftrj "a$ind $x $y 0.2"
+		        puts $ftrj "a$ind $x $y 0.2"
 				puts $truckdat "a$ind $x"
 			}
 			if {$i != 0 } {
