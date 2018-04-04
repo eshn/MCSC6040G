@@ -2,6 +2,8 @@
 #include "stdio.h"
 #include "math.h"
 
+#define PI 3.14159265359
+
 // RNG Procedure
 double rnd()
 {
@@ -9,10 +11,10 @@ double rnd()
 }
 
 // Probability of infection (by distance). IMPORTANT, THIS IS A PROBABILITY PER UNIT TIME.
-double disease_prob(double x, double a)
+double disease_prob(double x, double a, double dt)
 {
 	double prob;
-	prob = exp(1 / (a*a))*exp(-1 / (a*a - x * x))*exp(-4 * x*x / (a*a));
+	prob = pow(exp(1 / (a*a))*exp(-1 / (a*a - x * x))*exp(-4 * x*x / (a*a)), 1/dt);
 	return prob;
 }
 

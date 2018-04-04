@@ -6,18 +6,16 @@
 
 
 #define N 500 // Population size
-#define INFECTED_INIT 5 // Percentage of population initially infected.
+#define INFECTED_INIT 10 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
 //////////// TIME IN SECONDS //////////////
-#define REC_MEAN 25 // Mean of recovery time
-#define REC_VAR 100 // Variance of recovery time
-#define SUS_MEAN 25 // Mean time to become susceptible
-#define SUS_VAR 100 // Variance of time to become susceptible
+#define REC_MEAN 0.5 // Mean of recovery time
+#define SUS_MEAN 0.5 // Mean time to become susceptible
 
 #define L 25 // Domain size
 #define SEED 0 // Flag for seed
-#define TMAX 100
+#define TMAX 50
 
 int main()
 {
@@ -28,7 +26,6 @@ int main()
 
 	double x[N], y[N], vx[N], vy[N];
 	int state[N]; // State of the particle. 1 - Susceptible. 2 - Infected. 3 - Recovered.
-	int TtR[N], TtS[N]; // Time to Recover (after infection), Susceptable (after recovery)
 	double t = 0.0, dt = 0.05;
 	int total_S, total_I, total_R, intsteps = 0;
 	double r, dist;
@@ -41,10 +38,7 @@ int main()
 
 		vx[i] = 2.0 * rnd() - 1.0;
 		vy[i] = 2.0 * rnd() - 1.0;
-
-		TtR[i] = 0;
-		TtS[i] = 0;
-
+		
 		state[i] = 1;
 	}
 
@@ -58,10 +52,6 @@ int main()
 			ind = int(N*rnd());
 		} while (state[ind] == 2);
 		state[ind] = 2;
-		TtR[ind] = int(BMT(0.0, (double)REC_VAR) / dt); // Recovery time based on Gaussian
-		do {
-			TtR[ind] = int(BMT(0.0, (double)REC_VAR) / dt);
-		} while (TtR[ind] < 0);
 		total_I += 1;
 	}
 	total_S = N - total_I;
@@ -121,41 +111,13 @@ int main()
 				y[i] = 2.0 * L - y[i];
 				vy[i] = -vy[i];
 			}
-			if (state[i] == 2) // Remaining time of infection. If 0, change to recovered.
-			{
-				if (TtR[i] == 0)
-				{
-					state[i] = 3;
-					total_R += 1;
-					total_I -= 1;
-					TtS[i] = int(BMT((double)SUS_MEAN, (double)SUS_VAR) / dt); // Adds time to become susceptible again
-					do {
-						TtS[i] = int(BMT((double)SUS_MEAN, (double)SUS_VAR) / dt);
-					} while (TtS[i] < 0);
-					ItoRcount += 1;
-				}
-				else {
-					TtR[i] -= 1;
-				}
-			}
-			/*else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
-			{
-				if (TtS[i] == 0)
-				{
-					state[i] = 1;
-					total_S += 1;
-					total_R -= 1;
-					RtoScount += 1;
-				}
-				else
-				{
-					TtS[i] -= 1;
-				}
-			}
-			*/
 		}
 		for (int i = 0; i < N; i++)
 		{
+			/*if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
+			{
+
+			}*/
 			// Disease interaction
 			if (state[i] == 2)
 			{
@@ -174,13 +136,17 @@ int main()
 								state[j] = 2;
 								total_I += 1;
 								total_S -= 1;
-								TtR[j] = int(BMT((double)REC_MEAN, (double)REC_VAR) / dt); // Adds recovery time
-								do {
-									TtR[j] = int(BMT((double)REC_MEAN, (double)REC_VAR) / dt);
-								} while (TtR[j] < 0);
 							}
 						}
 					}
+				}
+				r = rnd() * 100.0;
+				if (r < REC_MEAN)
+				{
+					state[i] = 3;
+					total_I -= 1;
+					total_R += 1;
+					ItoRcount += 1;
 				}
 			}
 		}
