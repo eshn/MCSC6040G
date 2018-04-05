@@ -10,14 +10,14 @@
 #define A 1 // Minimum particle distance for interaction
 
 //////////// TIME IN SECONDS //////////////
-#define REC_MEAN 25 // Mean of recovery time
+#define REC_MEAN 50 // Mean of recovery time
 #define REC_VAR 100 // Variance of recovery time
-#define SUS_MEAN 25 // Mean time to become susceptible
+#define SUS_MEAN 20 // Mean time to become susceptible
 #define SUS_VAR 100 // Variance of time to become susceptible
 
 #define L 25 // Domain size
 #define SEED 0 // Flag for seed
-#define TMAX 100
+#define TMAX 200
 
 int main()
 {
@@ -59,7 +59,7 @@ int main()
 		} while (state[ind] == 2);
 		state[ind] = 2;
 		TtR[ind] = int(BMT(0.0, (double)REC_VAR) / dt); // Recovery time based on Gaussian
-		do {
+		do { // Prevents negative recovery time
 			TtR[ind] = int(BMT(0.0, (double)REC_VAR) / dt);
 		} while (TtR[ind] < 0);
 		total_I += 1;
@@ -88,14 +88,6 @@ int main()
 		// Position Updates only
 		for (int i = 0; i < N; i++)
 		{
-			// Checks probability of changing velocity
-			/*r = rnd();
-			if (r < prob)
-			{
-				vx[i] = (L / 100.0)*(2 * rnd() - 1);
-				vy[i] = (L / 100.0)*(2 * rnd() - 1);
-			}*/
-
 			// Position update
 			x[i] += vx[i];
 			y[i] += vy[i];
@@ -138,7 +130,7 @@ int main()
 					TtR[i] -= 1;
 				}
 			}
-			/*else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
+			else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
 			{
 				if (TtS[i] == 0)
 				{
@@ -152,7 +144,6 @@ int main()
 					TtS[i] -= 1;
 				}
 			}
-			*/
 		}
 		for (int i = 0; i < N; i++)
 		{
