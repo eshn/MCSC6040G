@@ -11,7 +11,7 @@ def clean_data(lines):
     return data
 
 N = 500
-modelID = 4
+modelID = 5
 
 if modelID == 1: # Basic SIR
     beta = 0.6
@@ -31,8 +31,11 @@ elif modelID == 2 or modelID == 3: # Basic SIRS (2 without waning population, 3 
     r_init = 0.0*N
     tmax = 50
     dt = 0.05
-elif modelID == 4: # SIRS with probability based recovery time
-    tmax = 200
+elif modelID == 4: # SIRS with probability based recovery time and "bacteria like" movement
+    tmax = 2000
+    dt = 0.05
+elif modelID == 5:  # SIRS with probability based recovery time and "bacteria like" movement
+    tmax = 2000
     dt = 0.05
 
 with open('SIRstat.dat', 'r') as d:

@@ -114,8 +114,16 @@ int main()
 			}
 			else if (movestate[i] == 1) // Run phase
 			{
-				x[i] += vx[i];
-				y[i] += vy[i];
+				if (state[i] == 2)
+				{
+					x[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax);	// position update
+					y[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax);
+				}
+				else
+				{
+					x[i] += vx[i];
+					y[i] += vy[i];
+				}
 				if (RTrand < RtoTprob) // checks for change in move state
 				{
 					movestate[i] = 0; // changes state
