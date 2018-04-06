@@ -34,12 +34,16 @@ int main()
 	int total_S, total_I, total_R, intsteps = 0;
 	double r, dist, prob;
 	double RTinit_prob = 0.5, RtoTprob = 0.25, TtoRprob = 0.25, RTrand;
+
+	int total_infected = 0, total_secondary = 0;
+	int secondary[N];
 	
 	// Initialization
 	for (int i = 0; i < N; i++)
 	{
 		x[i] = L * rnd();
 		y[i] = L * rnd();
+		secondary[i] = 0;
 
 		if (rnd() < RTinit_prob) // Run and Tumble state initialization
 		{
@@ -96,7 +100,7 @@ int main()
 		int contact = 0; // tracks contact rate
 		int ItoRcount = 0, RtoScount = 0;
 		
-		// Position Updates only
+		// Position Updates
 		for (int i = 0; i < N; i++)
 		{
 			
@@ -155,6 +159,9 @@ int main()
 						TtS[i] = int(BMT((double)SUS_MEAN, (double)SUS_VAR) / dt);
 					} while (TtS[i] < 0);
 					ItoRcount += 1;
+					total_infected += 1; // Tracks number of secondary infections in one infectious cycle
+					total_secondary += secondary[i];
+					secondary[i] = 0;
 				}
 				else {
 					TtR[i] -= 1;
@@ -199,6 +206,7 @@ int main()
 								do {
 									TtR[j] = int(BMT((double)REC_MEAN, (double)REC_VAR) / dt);
 								} while (TtR[j] < 0);
+								secondary[i] += 1; // Keeps track of secondary infections
 							}
 						}
 					}
@@ -232,4 +240,7 @@ int main()
 	fclose(RtoS);
 	fclose(position);
 	fclose(SIRstat);
+	printf("Average number of secondary infections: %f \n", (double)total_secondary / (double)total_infected);
+	printf("Total number of secondary infections: %d \n", total_secondary);
+	printf("Total number of infections: %d \n", total_infected);
 }

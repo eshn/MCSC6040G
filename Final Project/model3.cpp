@@ -31,6 +31,9 @@ int main()
 	double t = 0.0, dt = 0.05;
 	int total_S, total_I, total_R, total_W, intsteps = 0;
 	double r, dist;
+
+	int total_infected = 0, total_secondary = 0;
+	int secondary[N];
 	
 	// Initialization
 	for (int i = 0; i < N; i++)
@@ -40,6 +43,8 @@ int main()
 
 		vx[i] = 2.0 * rnd() - 1.0;
 		vy[i] = 2.0 * rnd() - 1.0;
+
+		secondary[i] = 0;
 		
 		state[i] = 1;
 	}
@@ -147,6 +152,7 @@ int main()
 									total_W -= 1;
 								}
 								state[j] = 2;
+								secondary[i] += 1;
 							}
 						}
 					}
@@ -159,6 +165,9 @@ int main()
 					total_I -= 1;
 					total_R += 1;
 					ItoRcount += 1;
+					total_infected += 1;
+					total_secondary += secondary[i];
+					secondary[i] = 0;
 				}
 			}
 		}
@@ -189,4 +198,7 @@ int main()
 	fclose(RtoS);
 	fclose(position);
 	fclose(SIRstat);
+	printf("Average number of secondary infections: %f \n", (double)total_secondary / (double)total_infected);
+	printf("Total number of secondary infections: %d \n", total_secondary);
+	printf("Total number of infections: %d \n", total_infected);
 }
