@@ -62,12 +62,13 @@ int main()
 	total_R = 0;
 
 
-	FILE *position, *SIRstat, *contact_i, *ItoR, *RtoS;
+	FILE *position, *SIRstat, *contact_i, *ItoR, *RtoS, *reprod;
 	position = fopen("pos.xyz", "w");
 	SIRstat = fopen("SIRstat.dat", "w");
 	contact_i = fopen("InfectedContact.dat", "w");
 	ItoR = fopen("ItoR.dat", "w");
 	RtoS = fopen("RtoS.dat", "w");
+	reprod = fopen("reprod.dat", "w");
 
 	fprintf(SIRstat, "%d %d %d\n", total_S, total_I, total_R);
 	while (t < TMAX)
@@ -154,6 +155,7 @@ int main()
 					ItoRcount += 1;
 					total_infected += 1;
 					total_secondary += secondary[i];
+					fprintf(reprod, "%f\n", (double)total_secondary / (double)total_infected);
 					secondary[i] = 0;
 				}
 			}
@@ -185,6 +187,7 @@ int main()
 	fclose(RtoS);
 	fclose(position);
 	fclose(SIRstat);
+	fclose(reprod);
 	printf("Average number of secondary infections: %f \n", (double)total_secondary / (double)total_infected);
 	printf("Total number of secondary infections: %d \n", total_secondary);
 	printf("Total number of infections: %d \n", total_infected);
