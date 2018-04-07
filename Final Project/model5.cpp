@@ -17,7 +17,7 @@
 
 #define L 25 // Domain size
 #define SEED 0 // Flag for seed
-#define TMAX 2000
+#define TMAX 1000
 
 int main()
 {

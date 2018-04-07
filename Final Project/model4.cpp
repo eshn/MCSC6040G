@@ -5,19 +5,19 @@
 #include "tools.h"
 
 
-#define N 100 // Population size
+#define N 500 // Population size
 #define INFECTED_INIT 5 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
 //////////// TIME IN SECONDS //////////////
-#define REC_MEAN 50 // Mean of recovery time
+#define REC_MEAN 25 // Mean of recovery time
 #define REC_VAR 100 // Variance of recovery time
-#define SUS_MEAN 20 // Mean time to become susceptible
+#define SUS_MEAN 25 // Mean time to become susceptible
 #define SUS_VAR 100 // Variance of time to become susceptible
 
 #define L 25 // Domain size
 #define SEED 0 // Flag for seed
-#define TMAX 2000
+#define TMAX 200
 
 int main()
 {
@@ -28,16 +28,14 @@ int main()
 
 	double x[N], y[N], vx[N], vy[N];
 	int state[N]; // State of the particle. 1 - Susceptible. 2 - Infected. 3 - Recovered.
-	int movestate[N]; // Move state of the partcile. 1 - Run. 0 - Tumble.
 	int TtR[N], TtS[N]; // Time to Recover (after infection), Susceptable (after recovery)
 	double t = 0.0, dt = 0.05, vmax = 0.5;
 	int total_S, total_I, total_R, intsteps = 0;
 	double r, dist, prob;
-	double RTinit_prob = 0.5, RtoTprob = 0.25, TtoRprob = 0.25, RTrand;
 
 	int total_infected = 0, total_secondary = 0;
 	int secondary[N];
-	
+
 	// Initialization
 	for (int i = 0; i < N; i++)
 	{
@@ -45,18 +43,8 @@ int main()
 		y[i] = L * rnd();
 		secondary[i] = 0;
 
-		if (rnd() < RTinit_prob) // Run and Tumble state initialization
-		{
-			movestate[i] = 1;
-			vx[i] = 2.0*vmax * rnd() - vmax;
-			vy[i] = 2.0*vmax * rnd() - vmax;
-		}
-		else
-		{
-			movestate[i] = 0;
-			vx[i] = 0.0;
-			vy[i] = 0.0;
-		}
+		vx[i] = 2.0*vmax * rnd() - vmax;
+		vy[i] = 2.0*vmax * rnd() - vmax;
 
 		TtR[i] = 0;
 		TtS[i] = 0;
@@ -100,33 +88,14 @@ int main()
 
 		int contact = 0; // tracks contact rate
 		int ItoRcount = 0, RtoScount = 0;
-		
+
 		// Position Updates
 		for (int i = 0; i < N; i++)
 		{
-			
-			RTrand = rnd(); // Checks for changes in move state and position updates.
-			if (movestate[i] == 0) // Tumble phase
-			{
-				x[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax); // Brownian
-				y[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax);
-				if (RTrand < TtoRprob) // Checks for change in move state
-				{
-					movestate[i] = 1; // Changes state, assign new velocity
-					vx[i] = 2.0*vmax * rnd() - vmax;
-					vy[i] = 2.0*vmax * rnd() - vmax;
-				}
-			}
-			else if (movestate[i] == 1) // Run phase
-			{
-				x[i] += vx[i];
-				y[i] += vy[i];
-				if (RTrand < RtoTprob) // checks for change in move state
-				{
-					movestate[i] = 0; // changes state
-				}
-			}
-			
+
+			x[i] += vx[i];
+			y[i] += vy[i];
+
 			// Wall Reflection
 			if (x[i] < 0)
 			{
@@ -169,7 +138,7 @@ int main()
 					TtR[i] -= 1;
 				}
 			}
-			else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
+			/*else if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
 			{
 				if (TtS[i] == 0)
 				{
@@ -183,6 +152,7 @@ int main()
 					TtS[i] -= 1;
 				}
 			}
+			*/
 		}
 		for (int i = 0; i < N; i++)
 		{
