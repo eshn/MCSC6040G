@@ -11,31 +11,31 @@ def clean_data(lines):
     return data
 
 N = 500
-modelID = 5
+modelID = 6
 
 if modelID == 1: # Basic SIR
-    beta = 0.6
-    gamma = 0.12
+    beta = 0.55
+    gamma = 0.1
     alpha = 0.0
-    s_init = 0.95*N
-    i_init = 0.05*N
-    r_init = 0.0*N
-    tmax = 50
-    dt = 0.05
-elif modelID == 2 or modelID == 3: # Basic SIRS (2 without waning population, 3 with waning population)
-    beta = 0.6
-    gamma = 0.13
-    alpha = 0.12
     s_init = 0.9*N
     i_init = 0.1*N
     r_init = 0.0*N
     tmax = 50
     dt = 0.05
-elif modelID == 4: # SIRS with probability based recovery time and "bacteria like" movement
-    tmax = 2000
+elif modelID == 2 or modelID == 3: # Basic SIRS (2 without waning population, 3 with waning population)
+    beta = 0.55
+    gamma = 0.1
+    alpha = 0.1
+    s_init = 0.9*N
+    i_init = 0.1*N
+    r_init = 0.0*N
+    tmax = 50
     dt = 0.05
-elif modelID == 5:  # SIRS with probability based recovery time and "bacteria like" movement
-    tmax = 2000
+elif modelID == 4:
+    tmax = 200
+    dt = 0.05
+elif modelID > 4: # SIRS with probability based recovery time and "bacteria like" movement
+    tmax = 1000
     dt = 0.05
 
 with open('SIRstat.dat', 'r') as d:
@@ -67,20 +67,23 @@ if modelID < 4:
             r[k] = r[k-1] + gamma*i[k-1]*dt - alpha*r[k-1]*dt
 
 
-    plt.plot(t,s,'b',label='S')
-    plt.plot(t,i,'y',label='I')
-    plt.plot(t,r,'r',label='R')
+    plt.plot(t,s,'b',label='Susceptible')
+    plt.plot(t,i,'y',label='Infected')
+    plt.plot(t,r,'r',label='Recovered')
     if modelID == 3:
-        plt.plot(t,w,'k',label='W')
+        plt.plot(t,w,'k',label='Waning Population')
 
 
-plt.plot(t,stats_data[:,0],'b-.',label='Ssim')
-plt.plot(t,stats_data[:,1],'y-.',label='Isim')
-plt.plot(t,stats_data[:,2],'r-.',label='Rsim')
+plt.plot(t,stats_data[:,0],'b--',label='Susceptible')
+plt.plot(t,stats_data[:,1],'y--',label='Infected')
+plt.plot(t,stats_data[:,2],'r--',label='Recovered')
+# plt.plot(t,stats_data[:,0]+stats_data[:,2],'k--',label='S+R')
 if modelID == 3:
-    plt.plot(t,stats_data[:,3],'k-.',label='Wsim')
+    plt.plot(t,stats_data[:,3],'k--',label='W (Simulation)')
 plt.xlim([0,tmax])
-# plt.ylim([-0.1, 1])
 plt.legend()
+plt.title('N = 100')
+plt.xlabel('Time')
+plt.ylabel('Population')
 plt.show()
 
