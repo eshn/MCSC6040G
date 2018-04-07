@@ -43,7 +43,6 @@ int main()
 	{
 		x[i] = L * rnd();
 		y[i] = L * rnd();
-		secondary[i] = 0;
 
 		if (rnd() < RTinit_prob) // Run and Tumble state initialization
 		{
@@ -61,6 +60,7 @@ int main()
 		TtR[i] = 0;
 		TtS[i] = 0;
 
+		secondary[i] = 0;
 		state[i] = 1;
 	}
 
@@ -101,7 +101,7 @@ int main()
 		int contact = 0; // tracks contact rate
 		int ItoRcount = 0, RtoScount = 0;
 		
-		// Position Updates
+		// Position Updates only
 		for (int i = 0; i < N; i++)
 		{
 			
@@ -119,8 +119,16 @@ int main()
 			}
 			else if (movestate[i] == 1) // Run phase
 			{
-				x[i] += vx[i];
-				y[i] += vy[i];
+				if (state[i] == 2)
+				{
+					x[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax);	// position update
+					y[i] += sqrt(2 * dt) * (2.0*vmax * rnd() - vmax);
+				}
+				else
+				{
+					x[i] += vx[i];
+					y[i] += vy[i];
+				}
 				if (RTrand < RtoTprob) // checks for change in move state
 				{
 					movestate[i] = 0; // changes state
@@ -160,7 +168,7 @@ int main()
 						TtS[i] = int(BMT((double)SUS_MEAN, (double)SUS_VAR) / dt);
 					} while (TtS[i] < 0);
 					ItoRcount += 1;
-					total_infected += 1; // Tracks number of secondary infections in one infectious cycle
+					total_infected += 1;
 					total_secondary += secondary[i];
 					fprintf(reprod, "%f\n", (double)total_secondary / (double)total_infected);
 					secondary[i] = 0;
@@ -208,7 +216,7 @@ int main()
 								do {
 									TtR[j] = int(BMT((double)REC_MEAN, (double)REC_VAR) / dt);
 								} while (TtR[j] < 0);
-								secondary[i] += 1; // Keeps track of secondary infections
+								secondary[i] += 1;
 							}
 						}
 					}
