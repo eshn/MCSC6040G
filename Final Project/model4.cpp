@@ -1,3 +1,7 @@
+///// Eric Ng (100446517)
+///// MCSC6040G Final Project
+///// model4.cpp - SIR(S) with probabilistic recovery/immunity time
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -9,7 +13,6 @@
 #define INFECTED_INIT 5 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
-//////////// TIME IN SECONDS //////////////
 #define REC_MEAN 25 // Mean of recovery time
 #define REC_VAR 100 // Variance of recovery time
 #define SUS_MEAN 25 // Mean time to become susceptible

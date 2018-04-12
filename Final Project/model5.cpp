@@ -1,3 +1,6 @@
+///// Eric Ng (100446517)
+///// MCSC6040G Final Project
+///// model5.cpp - SIRS with Bacterial Motility
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -9,7 +12,6 @@
 #define INFECTED_INIT 5 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
-//////////// TIME IN SECONDS //////////////
 #define REC_MEAN 50 // Mean of recovery time
 #define REC_VAR 100 // Variance of recovery time
 #define SUS_MEAN 20 // Mean time to become susceptible

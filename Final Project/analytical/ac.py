@@ -1,7 +1,12 @@
+#### Eric Ng (100446517)
+#### MSCS6040G Final Project
+#### ac.py - Generates autocorrelation curve from population functions
+
 import scipy as sc
 import math as m
 import matplotlib.pyplot as plt
 
+# Procedure to read and parse file contents
 def clean_data(lines):
     data = []
     lines = [a.strip("\n,") for a in lines]
@@ -10,11 +15,13 @@ def clean_data(lines):
     data = sc.double(sc.array(data))
     return data
 
+# Autocorrelation procedure
 def autocorr(x):
     result = sc.correlate(x, x, mode='full')
     result = result[len(x)-1:]
     return result
 
+# Read data
 with open('model6.dat', 'r') as d:
     lines = d.readlines()
 d.close()

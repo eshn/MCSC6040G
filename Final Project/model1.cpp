@@ -1,3 +1,7 @@
+///// Eric Ng (100446517)
+///// MCSC6040G Final Project
+///// model1.cpp - Basic SIR(S) with recovery/immunity as a Markov process
+
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -9,9 +13,9 @@
 #define INFECTED_INIT 10 // Percentage of population initially infected.
 #define A 1 // Minimum particle distance for interaction
 
-//////////// TIME IN SECONDS //////////////
-#define REC_MEAN 0.5 // Mean of recovery time
-#define SUS_MEAN 0.5 // Mean time to become susceptible
+// Recovery and Immunity Mechanics
+#define REC_MEAN 0.5 // Recovery probability
+#define SUS_MEAN 0.5 // Immunity Loss
 
 #define L 25 // Domain size
 #define SEED 0 // Flag for seed
@@ -84,14 +88,6 @@ int main()
 		// Position Updates only
 		for (int i = 0; i < N; i++)
 		{
-			// Checks probability of changing velocity
-			/*r = rnd();
-			if (r < prob)
-			{
-				vx[i] = (L / 100.0)*(2 * rnd() - 1);
-				vy[i] = (L / 100.0)*(2 * rnd() - 1);
-			}*/
-
 			// Position update
 			x[i] += vx[i];
 			y[i] += vy[i];
@@ -120,16 +116,12 @@ int main()
 		}
 		for (int i = 0; i < N; i++)
 		{
-			/*if (state[i] == 3) // Remaining time of recovered. If 0, change to susceptible.
-			{
-
-			}*/
-			// Disease interaction
+			// Infected Individual
 			if (state[i] == 2)
 			{
 				for (int j = 0; j < N; j++)
 				{
-					if (state[j] == 1)
+					if (state[j] == 1) // Infection Interaction
 					{
 						dist = sqrt(pow(x[i] - x[j], 2) + pow(y[i] - y[j], 2));
 						if (dist < A)
@@ -148,6 +140,7 @@ int main()
 					}
 				}
 				r = rnd() * 100.0;
+				// Recovery
 				if (r < REC_MEAN)
 				{
 					state[i] = 3;
@@ -161,6 +154,7 @@ int main()
 				}
 			}
 		}
+		// Write to file
 		for (int i = 0; i < N; i++)
 		{
 			if (state[i] == 1)

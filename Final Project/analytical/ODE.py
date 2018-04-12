@@ -1,7 +1,12 @@
+#### Eric Ng (100446517)
+#### MSCS6040G Final Project
+#### ODE.py - Plots of solution and simulation results
+
 import scipy as sc
 import math as m
 import matplotlib.pyplot as plt
 
+# Procedure to read and parse file contents
 def clean_data(lines):
     data = []
     lines = [a.strip("\n,") for a in lines]
@@ -11,8 +16,10 @@ def clean_data(lines):
     return data
 
 N = 500
+
 modelID = 6
 
+# Parameters for cases
 if modelID == 1: # Basic SIR
     beta = 0.55
     gamma = 0.1
@@ -38,6 +45,7 @@ elif modelID > 4: # SIRS with probability based recovery time and "bacteria like
     tmax = 1000
     dt = 0.05
 
+# Read from file
 with open('SIRstat.dat', 'r') as d:
     lines = d.readlines()
 d.close()
@@ -50,6 +58,7 @@ r = sc.zeros(t.shape)
 stats_data = clean_data(lines)
 stats_data = stats_data[:len(t)]
 
+# Plots
 if modelID < 4:
     s[0] = s_init
     i[0] = i_init
